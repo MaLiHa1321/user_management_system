@@ -1,0 +1,10 @@
+.login-right {
+  background: linear-gradient(to right, #4b6cb7, #182848);
+  height: 100%;
+  width: 100%;
+}
+
+/* For small screen links */
+a.small {
+  font-size: 0.875rem;
+}
