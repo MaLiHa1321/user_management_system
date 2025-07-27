@@ -1,18 +1,33 @@
 import React, { useState } from "react";
 import "./Login.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-//   const navigate = useNavigate();
+ const navigate = useNavigate();
   const [error, setError] = useState("");
 
    const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     console.log(email,password);
-   }
+
+    try {
+      const res = await axios.post("http://localhost:5000/login", { email, password });
+
+      if (res.data.success) {
+        alert("Login successful");
+        // navigate to dashboard or home
+        navigate("/dashboard");
+      }
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || "Login failed");
+    }
+  };
+   
   return (
     <div className="container-fluid vh-100 overflow-hidden">
       <div className="d-flex flex-row  h-100">

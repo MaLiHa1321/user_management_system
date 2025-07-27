@@ -1,20 +1,37 @@
 import React, { useState } from 'react';
 import "./Login.css";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Register = () => {
   const [name, setName] = useState(""); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-//   const navigate = useNavigate();
+    const navigate = useNavigate();
+     const [success, setSuccess] = useState("");
 
    const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
     console.log(name,email,password);
+    const userInfo = {name,email,password};
+ try {
+      const res = await axios.post("http://localhost:5000/register", userInfo);
 
+      // Check insertedId if your backend returns it
+      if (res.data?.insertedId || res.data?.success) {
+        setSuccess("Registration successful! Redirecting to login...");
+        setTimeout(() => navigate("/login"), 2000); // wait 2 seconds
+      } else {
+        setError("Registration failed");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Registration failed");
     }
+  };
+
     return (
         <div>
              <div className="container-fluid vh-100 overflow-hidden">

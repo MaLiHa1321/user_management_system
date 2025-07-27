@@ -9,12 +9,13 @@ import './index.css'
 import App from './App.jsx'
 import Login from './Authentication/Login.jsx';
 import Register from './Authentication/Register.jsx';
+import Panel from './Dashboard/Panel.jsx';
 
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <div>Hello World</div>,
+    element: <Login />,
   },
   {
     path: "/login",
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
   {
     path: '/register',
     element: <Register />
+  },
+  {
+    path: '/dashboard',
+    element: <Panel/>
   }
 ]);
 ReactDOM.createRoot(document.getElementById('root')).render(
