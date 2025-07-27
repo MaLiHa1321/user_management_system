@@ -20,6 +20,8 @@ const Login = () => {
       if (res.data.success) {
         alert("Login successful");
         // navigate to dashboard or home
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+
         navigate("/dashboard");
       }
     } catch (err) {
