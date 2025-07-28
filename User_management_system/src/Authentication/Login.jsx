@@ -15,7 +15,7 @@ const Login = () => {
     console.log(email,password);
 
     try {
-      const res = await axios.post("http://localhost:5000/login", { email, password });
+      const res = await axios.post("https://server-mocha-kappa-40.vercel.app/login", { email, password });
 
       if (res.data.success) {
         alert("Login successful");

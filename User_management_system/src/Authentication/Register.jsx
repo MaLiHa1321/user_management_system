@@ -18,7 +18,7 @@ const Register = () => {
     console.log(name,email,password);
     const userInfo = {name,email,password};
  try {
-      const res = await axios.post("http://localhost:5000/register", userInfo);
+      const res = await axios.post("https://server-mocha-kappa-40.vercel.app/register", userInfo);
 
       // Check insertedId if your backend returns it
       if (res.data?.insertedId || res.data?.success) {
