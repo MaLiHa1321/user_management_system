@@ -4,32 +4,21 @@ const cors = require('cors')
 const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
-const port = process.env.PORT || 5000
-
+const port = process.env.PORT || 5000;
 app.use(cors())
 app.use(express.json())
-
-
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ntnzcww.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
+  serverApi: { version: ServerApiVersion.v1, strict: true, deprecationErrors: true,}
 });
 async function run() {
   try {
-
      await client.connect();
    const database = client.db("User_Management");
    const userCollection = database.collection("user");
-
-   // To Ensure unique email
     await userCollection.createIndex({ email: 1}, { unique: true });
 
-   function extractUserData(req) {
+function extractUserData(req) {
   const { name, email, password } = req.body;
   return { name, email, password, blocked: false };
 }
@@ -58,9 +47,6 @@ function logAndSendServerError(res, label, err) {
   console.error(`${label} error:`, err);
   res.status(500).json({ success: false, message: "Server error" });
 }
-
-
-// register user
 app.post("/register", async (req, res) => {
   try {
     const userData = extractUserData(req);
@@ -72,8 +58,6 @@ app.post("/register", async (req, res) => {
     logAndSendServerError(res, "Registration", err);
   }
 });
-
-// login user
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -87,8 +71,6 @@ app.post("/login", async (req, res) => {
     logAndSendServerError(res, "Login", err);
   }
 });
-
-// get all user
  app.get("/users", async (req, res) => {
   try {
    const users = await userCollection.find().toArray();
@@ -98,8 +80,6 @@ app.post("/login", async (req, res) => {
    res.status(500).json({ message: "Server error" });
  }
 });
-
-// delete user
 app.delete("/users", async (req, res) => {
   try {
     const ids = getRequestIds(req);
@@ -111,8 +91,6 @@ app.delete("/users", async (req, res) => {
     logAndSendServerError(res, "Deletion", err);
   }
 });
-
-// block user
 app.patch("/users/block", async (req, res) => {
   try {
     const ids = getRequestIds(req);
@@ -124,8 +102,6 @@ app.patch("/users/block", async (req, res) => {
     logAndSendServerError(res, "Block", err);
   }
 });
-
-// unblock user
 app.patch("/users/unblock", async (req, res) => {
   try {
     const ids = getRequestIds(req);
@@ -137,15 +113,9 @@ app.patch("/users/unblock", async (req, res) => {
     logAndSendServerError(res, "Unblock", err);
   }
 });
-   
-
-    // Connect the client to the server	(optional starting in v4.7)
-   
-    // Send a ping to confirm a successful connection
    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
-    // Ensures that the client will close when you finish/error
      // await client.close();
   }
 }
@@ -153,7 +123,6 @@ run().catch(console.dir);
 app.get('/', (req, res) => {
   res.send('User Managemnet are on live')
 })
-
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })

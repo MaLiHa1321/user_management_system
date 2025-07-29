@@ -12,6 +12,7 @@ import unblockSelectedUsers from "./unBlockUsers";
 import { sortUsersByLastLoginDesc } from "./sortUser";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { formatTimeAgo } from "./timeUtilis";
 
 const Panel = () => {
   const [users, setUsers] = useState([]);
@@ -111,11 +112,9 @@ const Panel = () => {
             <td>{user.name}</td>
             <td className="text-break" style={{ minWidth: "150px" }}>{user.email}</td>
             <td style={{ minWidth: "120px" }}>
-              <div className="small">
-                {user.lastLogin
-                  ? `${Math.floor((Date.now() - new Date(user.lastLogin)) / 60000)} mins ago`
-                  : "Never"}
-              </div>
+           <div className="small">
+             {user.lastLogin ? formatTimeAgo(user.lastLogin) : "Never"}
+            </div>
               <LoginBarChart lastLogin={user.lastLogin} />
             </td>
             <td>{user.blocked ? "Blocked" : "Active"}</td>
