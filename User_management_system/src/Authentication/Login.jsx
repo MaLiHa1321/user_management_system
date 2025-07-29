@@ -62,16 +62,6 @@ const Login = () => {
                 />
               </div>
 
-              <div className="mb-3 form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="remember"
-                />
-                <label className="form-check-label" htmlFor="remember">
-                  Remember me
-                </label>
-              </div>
 
               <button type="submit" className="btn btn-primary w-100">
                 Sign In

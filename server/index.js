@@ -26,6 +26,9 @@ async function run() {
    const database = client.db("User_Management");
    const userCollection = database.collection("user");
 
+   // Ensure unique email
+    await userCollection.createIndex({ email: 1 }, { unique: true });
+
 
    // latest code
    function extractUserData(req) {
@@ -63,6 +66,12 @@ function logAndSendServerError(res, label, err) {
 app.post("/register", async (req, res) => {
   try {
     const userData = extractUserData(req);
+    
+    // Check if a user already exists with the same email
+    const existingUser = await userCollection.findOne({ email: userData.email });
+    if (existingUser) {
+      return sendError(res, 400, "User already registered with this email.");
+    }
     const result = await userCollection.insertOne(userData);
     res.status(201).json({ insertedId: result.insertedId, success: true });
   } catch (err) {
