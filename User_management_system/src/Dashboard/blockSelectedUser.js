@@ -1,35 +1,12 @@
-// src/actions/blockUsers.js
 
 const blockSelectedUsers = async (axiosPublic, selected, setUsers, setSelected) => {
-  const selectedIds = Object.entries(selected)
-    .filter(([_, checked]) => checked)
-    .map(([id]) => id);
-
-  if (selectedIds.length === 0) {
-    alert("No users selected.");
-    return;
-  }
-
-  try {
-    const res = await axiosPublic.patch("/users/block", {
-      ids: selectedIds,
-    });
-
-    if (res.data.success) {
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          selectedIds.includes(user._id) ? { ...user, blocked: true } : user
-        )
-      );
-      setSelected({});
-      alert(`${res.data.modifiedCount} user(s) blocked.`);
-    } else {
-      alert("Failed to block selected users.");
-    }
-  } catch (err) {
-    console.error("Batch block error:", err);
-    alert("Failed to block selected users.");
-  }
+  const ids = Object.keys(selected).filter(id => selected[id]);
+  if (!ids.length) return { success: false, message: "No users selected." };
+  try { const { data } = await axiosPublic.patch("/users/block", { ids });
+    if (data.success) { setUsers(u => u.map(user => ids.includes(user._id) ? { ...user, blocked: true } : user)); setSelected({}); return { success: true, message: `${data.modifiedCount} user(s) blocked.` }; }
+  } catch (e) { console.error(e); }
+  return { success: false, message: "Failed to block selected users." };
 };
 
 export default blockSelectedUsers;
+

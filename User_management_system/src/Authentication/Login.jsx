@@ -1,35 +1,35 @@
 import React, { useState } from "react";
 import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import useAxiosPublic from "../hook/useAxiosPublic";
+
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
- const navigate = useNavigate();
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-
-   const handleSubmit = async (e) => {
+  const navigate = useNavigate();
+   const axiosPublic = useAxiosPublic();
+   const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    console.log(email,password);
-
+    setSuccess("");
     try {
-      const res = await axios.post("https://server-mocha-kappa-40.vercel.app/login", { email, password });
-
+      const res = await axiosPublic.post("/login", formData);
       if (res.data.success) {
-        alert("Login successful");
-        // navigate to dashboard or home
+        setSuccess("Login successful! Redirecting to Dashboard page within 5s.");
+        setTimeout(() => navigate("/dashboard"), 2000);
         localStorage.setItem("user", JSON.stringify(res.data.user));
-
-        navigate("/dashboard");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Login error:", err);
       setError(err.response?.data?.message || "Login failed");
     }
   };
-   
   return (
     <div className="container-fluid vh-100 overflow-hidden">
       <div className="d-flex flex-row  h-100">
@@ -38,36 +38,18 @@ const Login = () => {
             <h2 className="mb-4 text-center">Sign In to The App</h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
-                <label htmlFor="email" className="form-label">
-                  E-mail
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  className="form-control"
-                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="test@example.com"
-                />
+                <label htmlFor="email" className="form-label">E-mail</label>
+                <input type="email" name="email" className="form-control" required onChange={handleChange} placeholder="test@example.com"/>
+               </div>
+               <div className="mb-3">
+                <label htmlFor="password" className="form-label"> Password</label>
+                <input type="password" name="password" className="form-control" required onChange={handleChange}/>
               </div>
-
-              <div className="mb-3">
-                <label htmlFor="password" className="form-label">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  className="form-control"
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-
-
               <button type="submit" className="btn btn-primary w-100">
                 Sign In
               </button>
                {error && <div className="alert alert-danger mt-3">{error}</div>}
-
+                {success && <div className="alert alert-success mt-3">{success}</div>}
               <div className="d-flex justify-content-between mt-3">
                 <a href="#" className="small">
                   Forgot password?
@@ -80,7 +62,5 @@ const Login = () => {
         <div className="col-md-6 w-100 login-right d-none d-md-block"></div>
       </div>
     </div>
-  );
-};
-
+  )};
 export default Login;

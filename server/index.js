@@ -26,11 +26,9 @@ async function run() {
    const database = client.db("User_Management");
    const userCollection = database.collection("user");
 
-   // Ensure unique email
-    await userCollection.createIndex({ email: 1 }, { unique: true });
+   // To Ensure unique email
+    await userCollection.createIndex({ email: 1}, { unique: true });
 
-
-   // latest code
    function extractUserData(req) {
   const { name, email, password } = req.body;
   return { name, email, password, blocked: false };
@@ -66,12 +64,8 @@ function logAndSendServerError(res, label, err) {
 app.post("/register", async (req, res) => {
   try {
     const userData = extractUserData(req);
-    
-    // Check if a user already exists with the same email
-    const existingUser = await userCollection.findOne({ email: userData.email });
-    if (existingUser) {
-      return sendError(res, 400, "User already registered with this email.");
-    }
+    const existingUser = await userCollection.findOne({ email: userData.email, name:userData.name });
+    if (existingUser) return sendError(res, 400, "User already registered with this email.");
     const result = await userCollection.insertOne(userData);
     res.status(201).json({ insertedId: result.insertedId, success: true });
   } catch (err) {
@@ -157,7 +151,7 @@ app.patch("/users/unblock", async (req, res) => {
 }
 run().catch(console.dir);
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  res.send('User Managemnet are on live')
 })
 
 app.listen(port, () => {
