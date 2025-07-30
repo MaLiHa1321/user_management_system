@@ -49,15 +49,10 @@ const Panel = () => {
 
 const handleBlock = async () => {
   const result = await blockSelectedUsers(axiosPublic, selected, setUsers, setSelected, users);
-
-  if (result.logout) {
-    toast.success(result.message);
-    localStorage.removeItem("user");
-    return navigate("/login");
-  }
-
+  if (result.logout) return toast.success(result.message), localStorage.removeItem("user"), navigate("/login");
   handleActionResult(result);
 };
+
 
  const handleUnblock = async () => {
    const result = await unblockSelectedUsers(axiosPublic, selected, setUsers, setSelected);
