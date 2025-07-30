@@ -23,17 +23,22 @@ const Panel = () => {
   const { deleteSelectedUsers } = useDeletedAction();
   const axiosPublic = useAxiosPublic();
   const sortedUsers = sortUsersByLastLoginDesc(users);
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (!storedUser) return navigate("/login");
+ useEffect(() => {
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  if (!storedUser) return navigate("/login");
 
-    const loadUsers = async () => {
-      const data = await fetchUsers();
-      setUsers(data);
-    };
+  const loadUsers = async () => {
+    const data = await fetchUsers();
+    // Convert lastLogin strings to Date objects before setting state
+    const usersWithDate = data.map(user => ({
+      ...user,
+      lastLogin: user.lastLogin ? new Date(user.lastLogin) : null,
+    }));
+    setUsers(usersWithDate);
+  };
 
-    loadUsers();
-  }, [navigate, fetchUsers]);
+  loadUsers();
+}, [navigate, fetchUsers]);
   const toggleCheckbox = (id) => {
     setSelected((prev) => ({ ...prev, [id]: !prev[id] }));
   };
@@ -52,7 +57,6 @@ const handleBlock = async () => {
   if (result.logout) return toast.success(result.message), localStorage.removeItem("user"), navigate("/login");
   handleActionResult(result);
 };
-
 
  const handleUnblock = async () => {
    const result = await unblockSelectedUsers(axiosPublic, selected, setUsers, setSelected);
