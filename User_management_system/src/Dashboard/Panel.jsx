@@ -7,12 +7,13 @@ import { FaTrash } from "react-icons/fa";
 import useUserApi from "./useUserApi";
 import useDeletedAction from "./useDeletedAction";
 import useAxiosPublic from "../hook/useAxiosPublic";
-import blockSelectedUsers from "./blockSelectedUser";
+// import blockSelectedUsers from "./blockSelectedUser";
 import unblockSelectedUsers from "./unBlockUsers";
 import { sortUsersByLastLoginDesc } from "./sortUser";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { formatTimeAgo } from "./timeUtilis";
+import blockSelectedUsers from "./blockSelectedUser";
 
 const Panel = () => {
   const [users, setUsers] = useState([]);
@@ -46,8 +47,15 @@ const Panel = () => {
     handleActionResult(result);
 };
 
-  const handleBlock = async () => {
-  const result = await blockSelectedUsers(axiosPublic, selected, setUsers, setSelected);
+const handleBlock = async () => {
+  const result = await blockSelectedUsers(axiosPublic, selected, setUsers, setSelected, users);
+
+  if (result.logout) {
+    toast.success(result.message);
+    localStorage.removeItem("user");
+    return navigate("/login");
+  }
+
   handleActionResult(result);
 };
 

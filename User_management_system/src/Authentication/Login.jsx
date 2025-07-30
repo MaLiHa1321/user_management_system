@@ -20,6 +20,7 @@ const Login = () => {
     setSuccess("");
     try {
       const res = await axiosPublic.post("/login", formData);
+      console.log("Login response user:", res.data.user);
       if (res.data.success) {
         setSuccess("Login successful! Redirecting to Dashboard page within 5s.");
         setTimeout(() => navigate("/dashboard"), 2000);
